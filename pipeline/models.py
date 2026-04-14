@@ -38,12 +38,15 @@ class DualInferenceEngine:
         Runs both models sequentially on the given frame.
         imgsz controls the input resolution - lower = faster but less accurate.
         """
+        import torch
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
         # 1. Detect Players
         player_results = self.player_model.predict(
             source=frame, 
             conf=config.CONF_THRESHOLD_PLAYERS, 
             imgsz=imgsz,
-            device='cuda' if self.use_tensorrt else 'cpu',
+            device=device,
             verbose=False
         )[0]
         
@@ -52,7 +55,7 @@ class DualInferenceEngine:
             source=frame, 
             conf=config.CONF_THRESHOLD_KEYPOINTS, 
             imgsz=imgsz,
-            device='cuda' if self.use_tensorrt else 'cpu',
+            device=device,
             verbose=False
         )[0]
 

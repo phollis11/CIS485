@@ -59,7 +59,7 @@ class VideoStream:
     def read(self):
         """Consumer Method: Grabs the next frame from the buffer."""
         try:
-            return True, self.Q.get(timeout=2.0)
+            return True, self.Q.get(timeout=10.0)
         except queue.Empty:
             return False, None
 

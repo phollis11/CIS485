@@ -5,6 +5,7 @@ import supervision as sv
 from sports.common.team import TeamClassifier
 from models import DualInferenceEngine
 import config
+import os
 
 def main():
     print("Testing TeamClassifier isolation...")
@@ -46,6 +47,11 @@ def main():
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Initializing TeamClassifier on {device}...")
+    
+    # Set HF token for authenticated model requests
+    if hasattr(config, 'HF_TOKEN') and config.HF_TOKEN:
+        os.environ["HF_TOKEN"] = config.HF_TOKEN
+        
     tc = TeamClassifier(device=device)
     
     print("Fitting Classifier on crops...")

@@ -13,3 +13,6 @@ BALL_ID = 0
 PLAYER_ID = 1
 GOALKEEPER_ID = 99
 REFEREE_ID = 98
+
+# --- HF SETTINGS ---
+HF_TOKEN = "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"

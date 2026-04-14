@@ -19,9 +19,10 @@ from ultralytics import YOLO
 import config
 
 # Colour used to draw each keypoint dot
-KP_COLOUR    = (0, 255, 0)   # bright green
-KP_RADIUS    = 6
+KP_COLOUR    = (255, 255, 0)  # Bright Cyan
+KP_RADIUS    = 7
 KP_THICKNESS = -1             # filled circle
+OUTLINE_COLOUR = (0, 0, 0)    # black outline
 
 LABEL_COLOUR      = (255, 255, 0)  # yellow text
 LABEL_FONT        = cv2.FONT_HERSHEY_SIMPLEX
@@ -44,17 +45,15 @@ def draw_keypoints(frame: np.ndarray, kpt_result) -> np.ndarray:
                 continue
 
             cx, cy = int(x), int(y)
+            # Draw black outline first for contrast
+            cv2.circle(annotated, (cx, cy), KP_RADIUS + 1, OUTLINE_COLOUR, 1)
             cv2.circle(annotated, (cx, cy), KP_RADIUS, KP_COLOUR, KP_THICKNESS)
-            cv2.putText(
-                annotated,
-                str(kp_idx),
-                (cx + KP_RADIUS + 2, cy + KP_RADIUS),
-                LABEL_FONT,
-                LABEL_FONT_SCALE,
-                LABEL_COLOUR,
-                LABEL_THICKNESS,
-                cv2.LINE_AA,
-            )
+            
+            # Label with outline/shadow effect
+            label = str(kp_idx)
+            pos = (cx + KP_RADIUS + 2, cy + KP_RADIUS)
+            cv2.putText(annotated, label, pos, LABEL_FONT, LABEL_FONT_SCALE, (0, 0, 0), LABEL_THICKNESS + 2, cv2.LINE_AA)
+            cv2.putText(annotated, label, pos, LABEL_FONT, LABEL_FONT_SCALE, LABEL_COLOUR, LABEL_THICKNESS, cv2.LINE_AA)
 
     return annotated
 
@@ -65,13 +64,13 @@ def main():
         "--source",
         type=str,
         default=r"C:\Users\jessi\OneDrive\Desktop\CIS 485\CIS485\samples\raw\prem_vid_short.mp4",
-        help="Path to input video file (or 0 for webcam)",
+        help="Path to input video file or image (or 0 for webcam)",
     )
     parser.add_argument(
         "--output",
         type=str,
-        default=r"C:\Users\jessi\OneDrive\Desktop\CIS 485\CIS485\samples\output\keypoint_test_output.mp4",
-        help="Where to save the annotated output video",
+        default=None,
+        help="Where to save the annotated output. Defaults to CIS485/samples/output/ with appropriate extension.",
     )
     parser.add_argument(
         "--imgsz",
@@ -81,6 +80,20 @@ def main():
     )
     args = parser.parse_args()
 
+    # Determine file type
+    img_extensions = ('.jpg', '.jpeg', '.png', '.bmp', '.webp')
+    is_image = args.source.lower().endswith(img_extensions)
+
+    # Set default output path if not provided
+    if args.output is None:
+        import os
+        out_dir = r"C:\Users\jessi\OneDrive\Desktop\CIS 485\CIS485\samples\output"
+        os.makedirs(out_dir, exist_ok=True)
+        if is_image:
+            args.output = os.path.join(out_dir, "keypoint_test_output.jpg")
+        else:
+            args.output = os.path.join(out_dir, "keypoint_test_output.mp4")
+
     # ------------------------------------------------------------------ #
     # Load model
     # ------------------------------------------------------------------ #
@@ -88,7 +101,45 @@ def main():
     model = YOLO(config.KEYPOINT_MODEL_PATH, task="pose")
 
     # ------------------------------------------------------------------ #
-    # Open video source
+    # Process Image
+    # ------------------------------------------------------------------ #
+    if is_image:
+        print(f"🖼  Processing Image: {args.source}")
+        frame = cv2.imread(args.source)
+        if frame is None:
+            print(f"❌ Could not read image: {args.source}")
+            return
+
+        result = model.predict(
+            source=frame,
+            conf=config.CONF_THRESHOLD_KEYPOINTS,
+            imgsz=args.imgsz,
+            verbose=False,
+        )[0]
+
+        annotated = draw_keypoints(frame, result)
+
+        n_instances = len(result.keypoints.data) if result.keypoints else 0
+        n_visible   = int((result.keypoints.data[:, :, 2] > config.CONF_THRESHOLD_KEYPOINTS).sum()) \
+                      if result.keypoints is not None and len(result.keypoints.data) > 0 else 0
+        
+        cv2.putText(
+            annotated,
+            f"Image Test | Instances: {n_instances} | KPs (conf): {n_visible}",
+            (10, 28),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.7,
+            (0, 200, 255),
+            2,
+            cv2.LINE_AA,
+        )
+
+        cv2.imwrite(args.output, annotated)
+        print(f"✅ Done! Image saved to: {args.output}")
+        return
+
+    # ------------------------------------------------------------------ #
+    # Process Video (Original Logic)
     # ------------------------------------------------------------------ #
     src = int(args.source) if args.source.isdigit() else args.source
     cap = cv2.VideoCapture(src)
@@ -101,9 +152,6 @@ def main():
     fps    = cap.get(cv2.CAP_PROP_FPS) or 30.0
     total  = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    # ------------------------------------------------------------------ #
-    # Set up video writer
-    # ------------------------------------------------------------------ #
     import os
     os.makedirs(os.path.dirname(args.output), exist_ok=True)
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
@@ -129,7 +177,6 @@ def main():
 
             annotated = draw_keypoints(frame, result)
 
-            # Burn frame number + keypoint count onto the frame
             n_instances = len(result.keypoints.data) if result.keypoints else 0
             n_visible   = int((result.keypoints.data[:, :, 2] > config.CONF_THRESHOLD_KEYPOINTS).sum()) \
                           if result.keypoints is not None and len(result.keypoints.data) > 0 else 0
@@ -139,7 +186,7 @@ def main():
                 (10, 28),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.7,
-                (0, 200, 255),
+                KP_COLOUR,
                 2,
                 cv2.LINE_AA,
             )
@@ -161,3 +208,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
