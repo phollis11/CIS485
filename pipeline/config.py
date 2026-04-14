@@ -15,4 +15,3 @@ GOALKEEPER_ID = 99
 REFEREE_ID = 98
 
 # --- HF SETTINGS ---
-HF_TOKEN = "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"
