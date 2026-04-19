@@ -44,13 +44,13 @@ def resolve_goalkeepers_team_id(players: sv.Detections, goalkeepers: sv.Detectio
 
 def main():
     parser = argparse.ArgumentParser(description="Real-Time Tactical Football Mapping")
-    parser.add_argument("--source", type=str, default=r"C:\Users\jessi\OneDrive\Desktop\CIS 485\CIS485\samples\raw\prem_vid_short.mp4", help="Path to video or 0 for camera")
+    parser.add_argument("--source", type=str, default=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "pipeline", "test.mp4"), help="Path to video or 0 for camera")
     parser.add_argument("--trt", action="store_true", help="Try to use TensorRT engines for maximum speed")
     parser.add_argument("--export", action="store_true", help="Export PyTorch models to TensorRT and exit")
     parser.add_argument("--imgsz", type=int, default=640, help="YOLO input resolution (lower = faster, e.g. 480)")
     parser.add_argument("--frame-skip", type=int, default=2, help="Run YOLO every N frames; interpolate in between (default: 2)")
     parser.add_argument("--output", type=str,
-                        default=r"C:\Users\jessi\OneDrive\Desktop\CIS 485\CIS485\samples\output\realtime_output.mp4",
+                        default=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "realtime_output.mp4"),
                         help="Path to save the output video")
     args = parser.parse_args()
 

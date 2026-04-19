@@ -3,3 +3,6 @@ ultralytics
 supervision
 opencv-python
 imageio[ffmpeg]
+numpy
+torch
+torchvision
