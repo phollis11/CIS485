@@ -15,5 +15,5 @@ GOALKEEPER_ID = 99
 REFEREE_ID = 98
 
 # --- HF SETTINGS ---
-
-HF_TOKEN = "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"
+#Add a Hugging Face token here for quicker download of ViT model for team classifier
+#HF_TOKEN = ""
