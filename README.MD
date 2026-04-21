@@ -45,5 +45,5 @@ A Computer Vision system that tracks players, classifies their teams, and maps t
   - `data/`: Designated for local application caching, resources, and demonstration assets securely detached from the backend root.
   - `style.css`: The core styling sheet ensuring our application features a dark, vibrant, glassmorphism-inspired aesthetic per modern design expectations.
 - `pipeline/`: Contains the core backend computer vision logic (`main_realtime.py`, `models.py`, `app_utils.py`).
-- `models/`: Empty cache directory for inference states (if used).
+- `samples/`: Contains sample videos and images for testing the pipeline.
 - `weights/`: Stores the fine-tuned YOLO weights (`.pt` files) for player and pitch detection.
