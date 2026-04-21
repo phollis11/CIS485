@@ -85,7 +85,7 @@ def main():
 
     st.markdown("""
     <div class="app-footer">
-        2D Virtual Mapping System &nbsp;|&nbsp; Shepherd University CIS Capstone Project - Peyton Hollis, Curtis Canby, Uchenna Ibe &nbsp;|&nbsp; Built with Streamlit and Ultralytics YOLO, utlizes SoccerNet and Roboflow datasets. 
+        2D Virtual Mapping System &nbsp;|&nbsp; Shepherd University CIS Capstone Project - Peyton Hollis, Curtis Canby, Uchenna Ibe &nbsp;|&nbsp; Built with Streamlit and Ultralytics YOLO, utlizes SoccerNet and Roboflow datasets. &nbsp;|&nbsp; https://github.com/phollis11/CIS485
     </div>
     """, unsafe_allow_html=True)
 

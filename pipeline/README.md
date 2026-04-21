@@ -29,3 +29,16 @@ For a full list of arguments, run:
 ```bash
 python pipeline/main_realtime.py --help
 ```
+
+## Links to Models and Datasets
+
+- [YOLO26n](https://github.com/ultralytics/ultralytics)
+- [ByteTrack](https://github.com/ifrankchen/ByteTrack)
+- [SigLIP](https://github.com/google/siglip)
+- [Roboflow](https://roboflow.com/)
+- [SoccerNet](https://github.com/SoccerNet/SoccerNet)
+
+## Links to fine tuning scripts
+
+- [Keypoint detection](https://colab.research.google.com/drive/1fG-JzXqy4vZyC3a_N8EQ0Cn1Jr39-N4Y?usp=sharing)
+- [Player tracking](https://colab.research.google.com/drive/1J5FE9DJEzzQ5E0gnmV5fKZ5BTmgr-7a2?usp=sharing)
